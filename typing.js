@@ -8,10 +8,11 @@ window.pauseTime = 0;
 function addClass(el,name) {
   el.className += ' '+name;
 }
-function removeClass(el,name) {
-  el.className = el.className.replace(name,'');
-}
 
+function removeClass(el, name) {
+    el.className = el.className.replace(new RegExp(`\\b${name}\\b`, 'g'), '').trim();
+}
+ 
 function randomWord() {
   const randomIndex = Math.ceil(Math.random() * wordsCount);
   return words[randomIndex - 1];
@@ -22,15 +23,26 @@ function formatWord(word) {
 }
 
 function newGame() {
-  document.getElementById('words').innerHTML = '';
-  for (let i = 0; i < 200; i++) {
-    document.getElementById('words').innerHTML += formatWord(randomWord());
-  }
-  addClass(document.querySelector('.word'), 'current');
-  addClass(document.querySelector('.letter'), 'current');
-  document.getElementById('info').innerHTML = (gameTime / 1000) + '';
-  window.timer = null;
+    document.getElementById('words').innerHTML = '';
+    document.getElementById('words').style.marginTop = '0px'; // reset scrolling
+    document.getElementById('info').innerHTML = (gameTime / 1000) + '';
+  
+    // ✅ Remove "over" class to restart game
+    removeClass(document.getElementById('game'), 'over');
+  
+    // Reset timer and game start
+    window.timer = null;
+    window.gameStart = null;
+  
+    for (let i = 0; i < 200; i++) {
+      document.getElementById('words').innerHTML += formatWord(randomWord());
+    }
+  
+    addClass(document.querySelector('.word'), 'current');
+    addClass(document.querySelector('.letter'), 'current');
 }
+ 
+
 
 function getWpm() {
   const words = [...document.querySelectorAll('.word')];
